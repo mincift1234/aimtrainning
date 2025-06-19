@@ -181,9 +181,24 @@ async function loadPlans() {
 // 10. 캘린더 초기화
 function initCalendar() {
   if (calendar) calendar.destroy();
+
+  // 모바일 판단 (640px 이하)
+  const isMobile = window.innerWidth <= 640;
+
   calendar = new FullCalendar.Calendar(calendarEl, {
     initialView: "dayGridMonth",
-    height: 600,
+    height: isMobile ? 400 : 600, // 모바일일 땐 전체 높이를 줄임
+    aspectRatio: isMobile ? 0.8 : 1.35, // 칸의 가로/세로 비율 조정
+    dayCellMinHeight: isMobile ? 40 : null, // 최소 cell 높이
+    dayMaxEvents: false, // 이벤트 개수 제한 해제
+    headerToolbar: {
+      left: "prev,next today",
+      center: "title",
+      right: isMobile ? "" : "dayGridMonth,listWeek"
+    },
+    // 모바일 리스트 뷰에서 한 주가 아닌 한 달 리스트를 보고 싶으면 'listMonth' 사용 가능
+    // listWeek 대신 listMonth 쓰면 한 달치 목록 보여줍니다.
+
     dateClick: (info) => {
       if (!selectedPlanId) return alert("플랜을 선택하세요.");
       currentDate = info.dateStr;
@@ -192,6 +207,7 @@ function initCalendar() {
       modal.classList.add("show");
     }
   });
+
   calendar.render();
 }
 
