@@ -103,6 +103,28 @@ button {
     min-width: 120px !important;
     box-sizing: border-box !important;
   }
+
+  /* 달력 전체 컨테이너 높이 강제 */
+  #calendar {
+    height: 400px !important;
+  }
+
+  /* 요일 헤더 폰트 사이즈 축소 */
+  .fc .fc-col-header-cell-cushion {
+    font-size: 0.75rem;
+    padding: 0.25rem 0 !important;
+  }
+
+  /* 날짜 번호 폰트 및 패딩 축소 */
+  .fc .fc-daygrid-day-number {
+    font-size: 0.75rem;
+    margin: 2px 0 !important;
+  }
+
+  /* 셀 내부 패딩 줄이기 */
+  .fc .fc-daygrid-day-frame {
+    padding: 2px !important;
+  }
 }
 
 /* 모달 기본 숨김 상태 */
