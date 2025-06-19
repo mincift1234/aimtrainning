@@ -100,19 +100,16 @@ button {
   }
 
   #btn-google {
-    /* 1) 화면 가로폭 꽉 채우기 */
-    width: 100% !important;
-    box-sizing: border-box !important;
-
-    /* 2) 패딩·폰트 크기 조정 */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important; /* ← 핵심 */
+    flex-shrink: 0 !important; /* 부모가 flex일 때 줄어드는 거 방지 */
+    white-space: nowrap !important; /* 무조건 한 줄 유지 */
     padding: 0.5rem 1rem !important; /* px-4 */
-    font-size: 0.75rem !important; /* text-xs보다 약간 작게 */
-
-    /* 3) 한 줄로 유지 */
-    white-space: nowrap !important;
-
-    /* 4) flex 축소 방지 (부모 flex일 경우) */
-    flex-shrink: 0 !important;
+    font-size: 0.75rem !important; /* 약간 작게 */
+    width: auto !important; /* 필요 없으면 화면 꽉 안 채우도록 */
+    min-width: 120px !important; /* 원하는 최소 너비 */
+    box-sizing: border-box !important;
   }
 }
 
