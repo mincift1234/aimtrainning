@@ -115,16 +115,28 @@ btnImportPlan.onclick = async () => {
   const code = shareCodeIn.value.trim();
   if (!code) return alert("공유 코드를 입력해주세요.");
   try {
-    const src = await db.collection("plans").doc(code).get();
-    if (!src.exists) throw new Error("유효하지 않은 코드입니다.");
-    const data = src.data();
-    const newRef = await db.collection("plans").add({ name: data.name, uid: auth.currentUser.uid });
+    // 1) 원본 플랜 문서 가져오기
+    const srcSnap = await db.collection("plans").doc(code).get();
+    if (!srcSnap.exists) throw new Error("유효하지 않은 코드입니다.");
+    const srcData = srcSnap.data();
+
+    // 2) 새로운 플랜 문서 생성 (description, playlistLink 포함)
+    const newRef = await db.collection("plans").add({
+      name: srcData.name,
+      uid: auth.currentUser.uid,
+      description: srcData.description || "",
+      playlistLink: srcData.playlistLink || ""
+    });
+
+    // 3) 원본 루틴 컬렉션 복사
     const rutSnap = await db.collection("plans").doc(code).collection("routines").get();
     const batch = db.batch();
-    rutSnap.forEach((r) => {
-      batch.set(db.collection("plans").doc(newRef.id).collection("routines").doc(), r.data());
+    rutSnap.forEach((doc) => {
+      const dest = db.collection("plans").doc(newRef.id).collection("routines").doc();
+      batch.set(dest, doc.data());
     });
     await batch.commit();
+
     alert("플랜을 가져왔습니다!");
     shareCodeIn.value = "";
     await loadPlans();
