@@ -125,6 +125,30 @@ button {
   .fc .fc-daygrid-day-frame {
     padding: 2px !important;
   }
+
+  .fc .fc-button {
+    padding: 0.25rem 0.5rem !important; /* 버튼 높이 줄이기 */
+    font-size: 0.75rem !important; /* 폰트 크기 줄이기 */
+    line-height: 1rem !important;
+  }
+
+  /* 날짜 제목 텍스트 (예: July 2025) 축소 */
+  .fc .fc-toolbar-title {
+    font-size: 1rem !important; /* 기존보다 작게 */
+    white-space: nowrap; /* 줄바꿈 방지 */
+  }
+
+  /* 헤더 툴바 자체 레이아웃 줄이기 */
+  .fc .fc-toolbar {
+    flex-wrap: nowrap !important;
+    gap: 0.5rem;
+    justify-content: space-between;
+  }
+
+  /* 툴바 그룹 사이 간격 최소화 */
+  .fc .fc-toolbar-chunk {
+    flex-shrink: 1;
+  }
 }
 
 /* 모달 기본 숨김 상태 */
