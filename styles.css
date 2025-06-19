@@ -1,0 +1,10 @@
+/* styles.css */
+#modal {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+}
+#modal.show {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
