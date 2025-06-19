@@ -1,10 +1,101 @@
-/* styles.css */
-#modal {
-  opacity: 0;
-  pointer-events: none;
-  transition: opacity 0.2s ease;
+/* ============================================================
+   1) 커스텀 폰트 불러오기 (GitHub → jsDelivr)
+   ============================================================ */
+@font-face {
+  font-family: "Tenada";
+  src: url("https://cdn.jsdelivr.net/gh/mincift1234/aimtrainning@main/fonts/Tenada.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
-#modal.show {
-  opacity: 1 !important;
-  pointer-events: auto !important;
+@font-face {
+  font-family: "Tenada";
+  src: url("https://cdn.jsdelivr.net/gh/mincift1234/aimtrainning@main/fonts/Tenada.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* ============================================================
+   2) 전역 폰트 및 컬러 설정
+   ============================================================ */
+body {
+  font-family: "Tenada", sans-serif;
+  margin: 0;
+  padding: 0;
+  background-color: #1f2937; /* gray-800 */
+  color: #f3f4f6; /* gray-100 */
+}
+header .logo {
+  font-weight: 700;
+}
+a {
+  color: #60a5fa; /* blue-400 */
+}
+a:hover {
+  color: #3b82f6; /* blue-500 */
+}
+button:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(96, 165, 250, 0.5);
+}
+
+/* ============================================================
+   3) 사이드바 그림자 토글
+   ============================================================ */
+#sidebar {
+  box-shadow: none !important;
+}
+#sidebar.translate-x-0 {
+  box-shadow: 4px 0 8px rgba(0, 0, 0, 0.6) !important;
+}
+
+/* ============================================================
+   4) 사이드바 내 모든 폼 컨트롤 중앙 정렬
+   ============================================================ */
+#sidebar input,
+#sidebar select,
+#sidebar button {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  box-sizing: border-box;
+}
+
+/* ============================================================
+   5) 기본 form 컨트롤 line-height 보정 (h-10 요소 대상)
+   ============================================================ */
+input[type="text"],
+input[type="url"],
+textarea,
+select,
+button {
+  line-height: 2.5rem;
+}
+
+/* ============================================================
+   6) — 핵심! 모바일 전용으로만 입력창 높이 확대 —
+   ============================================================ */
+@media (max-width: 640px) {
+  #sidebar input#plan-name,
+  #sidebar input#share-code {
+    /* 데스크탑 기본 h-10 유지, 모바일에서만 h-12 적용 */
+    height: 3rem !important; /* Tailwind h-12 */
+    line-height: 2.875rem !important; /* (48px − 2px 테두리) */
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+  #sidebar input#plan-name,
+  #sidebar input#share-code {
+    /* 세로 3rem으로 키우기 */
+    height: 3rem !important;
+    /* 텍스트가 가운데 오도록 위아래 패딩 확보 */
+    padding-top: 0.75rem !important;
+    padding-bottom: 0.75rem !important;
+    /* 테두리 박스 내 포함 */
+    box-sizing: border-box;
+  }
 }
