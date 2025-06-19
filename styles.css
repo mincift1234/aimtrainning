@@ -99,3 +99,16 @@ button {
     box-sizing: border-box;
   }
 }
+
+/* 모달 기본 숨김 상태 */
+#modal {
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+/* .show 클래스가 붙으면 보이게 */
+#modal.show {
+  opacity: 1 !important;
+  pointer-events: auto !important;
+}
