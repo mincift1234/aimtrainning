@@ -105,9 +105,6 @@ button {
     /* 좌우 패딩도 살짝 줄이기 */
     padding-left: 0.5rem;
     padding-right: 0.5rem;
-    /* → 여기를 추가 */
-    width: 100% !important; /* 부모 가로폭만큼 늘리기 */
-    box-sizing: border-box !important; /* 패딩 포함 */
   }
 }
 
