@@ -100,21 +100,19 @@ button {
   }
 
   #btn-google {
-    /* 1) 최대 너비를 화면 꽉 채우기로 */
+    /* 1) 화면 가로폭 꽉 채우기 */
     width: 100% !important;
-    max-width: 360px !important; /* 원한다면 상한 설정 */
     box-sizing: border-box !important;
 
-    /* 2) 좌우 패딩 충분히 늘리기 */
-    padding-left: 1rem !important; /* px-4 */
-    padding-right: 1rem !important; /* px-4 */
+    /* 2) 패딩·폰트 크기 조정 */
+    padding: 0.5rem 1rem !important; /* px-4 */
+    font-size: 0.75rem !important; /* text-xs보다 약간 작게 */
 
-    /* 3) 글씨는 조금만 줄이기 */
-    font-size: 0.75rem !important; /* text-xs */
+    /* 3) 한 줄로 유지 */
+    white-space: nowrap !important;
 
-    /* 4) 줄바꿈 허용하기 (whitespace-nowrap 제거 효과) */
-    white-space: normal !important;
-    word-break: keep-all; /* 한글 단어 깨짐 방지 */
+    /* 4) flex 축소 방지 (부모 flex일 경우) */
+    flex-shrink: 0 !important;
   }
 }
 
