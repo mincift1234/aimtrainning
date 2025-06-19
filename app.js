@@ -186,6 +186,7 @@ function initCalendar() {
   const isMobile = window.innerWidth <= 640;
 
   calendar = new FullCalendar.Calendar(calendarEl, {
+    locale: 'ko',
     initialView: "dayGridMonth",
     height: isMobile ? 400 : 600, // 모바일일 땐 전체 높이를 줄임
     aspectRatio: isMobile ? 0.8 : 1.35, // 칸의 가로/세로 비율 조정
