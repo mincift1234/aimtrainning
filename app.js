@@ -40,13 +40,13 @@ const btnAddRut = document.getElementById("btn-add-routine");
 const btnClose = document.getElementById("btn-close-modal");
 const btnSaveTpl = document.getElementById("btn-save-template");
 const btnLoadTpl = document.getElementById("btn-load-template");
-const btnMobileMenu = document.getElementById("btn-mobile-menu");
+const menuBtn = document.getElementById("btn-menu");
 const btnCloseSidebar = document.getElementById("btn-close-sidebar");
 const sidebar = document.getElementById("sidebar");
 
 // 3. 사이드바 슬라이드 토글
-if (btnMobileMenu && sidebar) {
-  btnMobileMenu.addEventListener("click", () => {
+if (menuBtn && sidebar) {
+  menuBtn.addEventListener("click", () => {
     sidebar.classList.toggle("translate-x-0");
     sidebar.classList.toggle("-translate-x-full");
   });
