@@ -100,11 +100,21 @@ button {
   }
 
   #btn-google {
-    /* 글자 크기 줄이기 */
-    font-size: 0.75rem; /* 기존 text-xs 보다도 조금 더 작게 */
-    /* 좌우 패딩도 살짝 줄이기 */
-    padding-left: 0.5rem;
-    padding-right: 0.5rem;
+    /* 1) 최대 너비를 화면 꽉 채우기로 */
+    width: 100% !important;
+    max-width: 360px !important; /* 원한다면 상한 설정 */
+    box-sizing: border-box !important;
+
+    /* 2) 좌우 패딩 충분히 늘리기 */
+    padding-left: 1rem !important; /* px-4 */
+    padding-right: 1rem !important; /* px-4 */
+
+    /* 3) 글씨는 조금만 줄이기 */
+    font-size: 0.75rem !important; /* text-xs */
+
+    /* 4) 줄바꿈 허용하기 (whitespace-nowrap 제거 효과) */
+    white-space: normal !important;
+    word-break: keep-all; /* 한글 단어 깨짐 방지 */
   }
 }
 
