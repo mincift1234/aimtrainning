@@ -186,7 +186,7 @@ function initCalendar() {
   const isMobile = window.innerWidth <= 640;
 
   calendar = new FullCalendar.Calendar(calendarEl, {
-    locale: 'ko',
+    locale: "ko",
     initialView: "dayGridMonth",
     height: isMobile ? 400 : 600, // 모바일일 땐 전체 높이를 줄임
     aspectRatio: isMobile ? 0.8 : 1.35, // 칸의 가로/세로 비율 조정
@@ -461,4 +461,14 @@ async function drawChart() {
   } else {
     scoreChart = new Chart(ctx, config);
   }
+}
+
+// app.js 하단에 추가 (브라우저 지원 확인)
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker
+      .register("/sw.js")
+      .then((reg) => console.log("Service Worker registered:", reg))
+      .catch((err) => console.error("Service Worker failed:", err));
+  });
 }
