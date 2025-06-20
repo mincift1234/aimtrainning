@@ -16,7 +16,7 @@ firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
 const db = firebase.firestore();
 
-// 2) DOM 요소
+// 2) DOM 요소 가져오기
 const btnGoogle = document.getElementById("btn-google");
 const btnLogout = document.getElementById("btn-logout");
 const btnMenu = document.getElementById("btn-menu");
@@ -24,17 +24,14 @@ const sidebar = document.getElementById("sidebar");
 const btnCloseSb = document.getElementById("btn-close-sidebar");
 const btnResetNick = document.getElementById("btn-reset-nickname");
 const appDiv = document.getElementById("app");
-
 const shareTitleEl = document.getElementById("share-title");
 const planSelect = document.getElementById("plan-select");
 const descInput = document.getElementById("share-description");
 const btnSharePlan = document.getElementById("btn-share-plan");
-
 const btnSortNew = document.getElementById("btn-sort-new");
 const btnSortLike = document.getElementById("btn-sort-like");
 const sharedList = document.getElementById("shared-plans-list");
 const emptyMsg = document.getElementById("empty-msg");
-
 const nicknameModal = document.getElementById("nickname-modal");
 const nicknameInput = document.getElementById("nickname-input");
 const btnSaveNickname = document.getElementById("btn-save-nickname");
@@ -42,16 +39,16 @@ const btnSaveNickname = document.getElementById("btn-save-nickname");
 let currentSort = "createdAt";
 let userNickname = "";
 
-// 3) 인증 상태 변화 처리
+// 3) 로그인 상태 처리
 auth.onAuthStateChanged(async (user) => {
     if (user) {
         btnGoogle.classList.add("hidden");
         btnLogout.classList.remove("hidden");
-
-        // 닉네임 여부 확인
+        // 닉네임 있는지 체크
         const uref = db.collection("users").doc(user.uid);
         const usnap = await uref.get();
         if (!usnap.exists || !usnap.data().nickname) {
+            // 첫 설정 모드
             nicknameModal.classList.remove("hidden");
             return;
         }
@@ -68,7 +65,7 @@ auth.onAuthStateChanged(async (user) => {
 btnGoogle.onclick = () => auth.signInWithPopup(new firebase.auth.GoogleAuthProvider());
 btnLogout.onclick = () => auth.signOut();
 
-// 4) 사이드바 토글 (translate-x-full ↔ translate-x-0)
+// 4) 사이드바 토글
 btnMenu.onclick = () => {
     if (sidebar.classList.contains("-translate-x-full")) {
         sidebar.classList.remove("-translate-x-full");
@@ -83,17 +80,29 @@ btnCloseSb.onclick = () => {
     sidebar.classList.remove("translate-x-0");
 };
 
-// 5) 닉네임 재설정 클릭
+// 5) 닉네임 변경 클릭
 btnResetNick.onclick = () => {
+    // 닫기 버튼 보여주기
+    document.getElementById("btn-close-nickname-modal").classList.remove("hidden");
     nicknameInput.value = userNickname;
     nicknameModal.classList.remove("hidden");
     appDiv.classList.add("hidden");
 };
 
-// 6) 닉네임 저장
+// 6) 닉네임 저장 (중복 검사 포함)
 btnSaveNickname.onclick = async () => {
     const nick = nicknameInput.value.trim();
     if (!nick) return alert("닉네임을 입력해주세요.");
+
+    // **중복 검사**
+    const conflict = await db
+        .collection("users")
+        .where("nickname", "==", nick)
+        .get()
+        .then((q) => q.docs.some((d) => d.id !== auth.currentUser.uid));
+    if (conflict) {
+        return alert("이미 사용 중인 닉네임입니다.");
+    }
 
     // 저장
     const uid = auth.currentUser.uid;
@@ -117,12 +126,11 @@ async function loadUserPlans() {
     });
 }
 
-// 8) 공유하기 핸들러
+// 8) 공유하기
 btnSharePlan.onclick = async () => {
     const title = shareTitleEl.value.trim();
     const planId = planSelect.value;
     const desc = descInput.value.trim();
-
     if (!title) return alert("공유 제목을 입력하세요.");
     if (!planId) return alert("플랜을 선택하세요.");
     if (!desc) return alert("설명을 입력하세요.");
@@ -135,12 +143,9 @@ btnSharePlan.onclick = async () => {
             .where("ownerUid", "==", auth.currentUser.uid)
             .where("planId", "==", planId)
             .get();
-        if (!dup.empty) {
-            alert("이미 이 플랜을 공유하셨습니다.");
-            return;
-        }
+        if (!dup.empty) return alert("이미 이 플랜을 공유하셨습니다.");
 
-        // 원본 플랜+루틴 로드
+        // 원본+루틴 읽어오기
         const pSnap = await db.collection("plans").doc(planId).get();
         const rSnap = await db.collection("plans").doc(planId).collection("routines").get();
         const routines = rSnap.docs.map((d) => d.data());
@@ -171,7 +176,7 @@ btnSharePlan.onclick = async () => {
     }
 };
 
-// 9) 정렬 버튼 이벤트
+// 9) 정렬
 btnSortNew.addEventListener("click", () => {
     currentSort = "createdAt";
     loadSharedPlans();
@@ -181,7 +186,7 @@ btnSortLike.addEventListener("click", () => {
     loadSharedPlans();
 });
 
-// 10) 공유된 플랜 리스트 로드/렌더링
+// 10) 공유 리스트 렌더링
 async function loadSharedPlans() {
     sharedList.innerHTML = "";
     const snap = await db.collection("sharedPlans").orderBy(currentSort, "desc").get();
@@ -193,8 +198,6 @@ async function loadSharedPlans() {
 
     for (const doc of snap.docs) {
         const d = doc.data();
-
-        // 소유자 닉네임 새로 조회
         const ownerSnap = await db.collection("users").doc(d.ownerUid).get();
         const ownerName = ownerSnap.exists && ownerSnap.data().nickname ? ownerSnap.data().nickname : "익명";
 
@@ -240,7 +243,7 @@ async function loadSharedPlans() {
         };
         wrap.append(likeBtn);
 
-        // 삭제 / 가져오기
+        // 삭제/가져오기
         if (d.ownerUid === auth.currentUser.uid) {
             const del = document.createElement("button");
             del.textContent = "삭제";
@@ -260,7 +263,7 @@ async function loadSharedPlans() {
                 imp.disabled = true;
                 try {
                     await db.collection("plans").add({
-                        name: d.originalDescription,
+                        name: d.postTitle,
                         uid: auth.currentUser.uid,
                         description: d.originalDescription,
                         playlistLink: d.originalPlaylistLink
