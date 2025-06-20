@@ -331,11 +331,19 @@ async function loadRoutines(date) {
     btnSave.onclick = async () => {
       const s = +input.value;
       if (isNaN(s)) return alert("유효한 점수를 입력하세요.");
+
       if (scoreMap[name]) {
+        // 기존 문서가 있으면 업데이트
         await scoreMap[name].ref.update({ score: s });
       } else {
+        // 없으면 새로 추가
         await statsCol().add({ date, routine: name, score: s });
       }
+
+      // 추가된 부분: 저장 후 리스트를 다시 로드
+      await loadRoutines(date);
+
+      // 차트도 업데이트
       drawChart();
     };
 
