@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="ko" class="h-full">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <title>트레이닝 코스 공유</title>
+
+        <!-- TailwindCSS -->
+        <script src="https://cdn.tailwindcss.com"></script>
+        <link rel="stylesheet" href="styles.css" />
+
+        <!-- Firebase SDK -->
+        <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-app-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-auth-compat.js"></script>
+        <script src="https://www.gstatic.com/firebasejs/9.22.1/firebase-firestore-compat.js"></script>
+    </head>
+    <body class="h-full flex flex-col bg-gray-900 text-gray-200">
+        <!-- HEADER -->
+        <header class="flex items-center justify-between px-4 py-3 bg-gray-800 shadow-sm z-10">
+            <div class="flex items-center space-x-3">
+                <button id="btn-menu" class="flex items-center text-white">
+                    Menu
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="inline w-4 h-4 ml-1"
+                        viewBox="0 0 20 20"
+                        fill="currentColor">
+                        <path
+                            fill-rule="evenodd"
+                            d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 
+                   0 011.08 1.04l-4.25 4.25a.75.75 0 01-1.08 0L5.21 8.27a.75.75 
+                   0 01.02-1.06z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </button>
+                <h1 class="logo text-xl sm:text-2xl text-blue-400">Aim Routine Planner</h1>
+            </div>
+            <div class="flex items-center space-x-2">
+                <button
+                    id="btn-google"
+                    class="flex items-center h-8 px-3 bg-gradient-to-r from-blue-500 to-indigo-600 hover:from-blue-600 hover:to-indigo-700 text-white rounded-full shadow-lg transition text-xs whitespace-nowrap">
+                    <img src="https://www.svgrepo.com/show/355037/google.svg" alt="Google" class="w-4 h-4 mr-1" />Google
+                    로그인
+                </button>
+                <button
+                    id="btn-logout"
+                    class="hidden flex items-center h-8 px-3 bg-red-500 hover:bg-red-600 text-white rounded-full shadow-lg transition text-xs whitespace-nowrap">
+                    로그아웃
+                </button>
+            </div>
+        </header>
+
+        <div class="flex flex-1 overflow-hidden">
+            <!-- SIDEBAR -->
+            <aside
+                id="sidebar"
+                class="fixed top-0 left-0 h-full w-80 bg-gray-800 p-4 overflow-y-auto transform -translate-x-full transition-transform duration-300 ease-in-out z-40 shadow-2xl flex flex-col">
+                <div>
+                    <div class="flex items-center justify-between mb-4">
+                        <h2 class="text-lg font-medium text-gray-200">메뉴</h2>
+                        <button id="btn-close-sidebar" class="p-1 text-gray-400 hover:text-gray-200">←</button>
+                    </div>
+                    <nav class="space-y-2 mb-6">
+                        <a
+                            href="index.html"
+                            class="flex items-center justify-center w-full h-10 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg text-sm font-medium shadow-md transition">
+                            <svg
+                                xmlns="http://www.w3.org/2000/svg"
+                                class="w-5 h-5"
+                                fill="none"
+                                viewBox="0 0 24 24"
+                                stroke="currentColor">
+                                <path
+                                    stroke-linecap="round"
+                                    stroke-linejoin="round"
+                                    stroke-width="2"
+                                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                            </svg>
+                            <span class="ml-2">마이 플랜</span>
+                        </a>
+                    </nav>
+                </div>
+                <div class="mt-auto">
+                    <hr class="border-gray-700 mb-2" />
+                    <div class="text-center">
+                        <button id="btn-reset-nickname" class="text-gray-400 hover:text-gray-200 text-xs">
+                            닉네임 변경
+                        </button>
+                    </div>
+                </div>
+            </aside>
+
+            <!-- MAIN CONTENT -->
+            <main id="app" class="flex-1 p-6 overflow-y-auto hidden">
+                <!-- 공유 센터 -->
+                <section class="max-w-3xl mx-auto bg-gray-800 rounded-lg p-6 shadow-lg space-y-6 mb-12">
+                    <div class="text-center">
+                        <h2 class="text-2xl font-semibold text-white">공유 센터</h2>
+                        <hr class="mt-2 border-gray-600" />
+                    </div>
+
+                    <!-- 공유 폼 -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
+                        <div class="flex flex-col">
+                            <label for="share-title" class="mb-1 text-sm text-gray-400">제목</label>
+                            <input
+                                id="share-title"
+                                type="text"
+                                placeholder="공유할 제목을 입력하세요"
+                                class="h-10 w-full px-3 bg-gray-700 rounded-lg border border-gray-600 text-sm text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                        </div>
+                        <div class="flex flex-col">
+                            <label for="plan-select" class="mb-1 text-sm text-gray-400">플랜 선택</label>
+                            <select
+                                id="plan-select"
+                                class="h-10 w-full px-3 bg-gray-700 rounded-lg border border-gray-600 text-sm text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                                <option value="" disabled selected>플랜을 선택하세요</option>
+                            </select>
+                        </div>
+                        <div class="flex flex-col">
+                            <label for="share-description" class="mb-1 text-sm text-gray-400">설명</label>
+                            <input
+                                id="share-description"
+                                type="text"
+                                placeholder="설명을 입력하세요"
+                                class="h-10 w-full px-3 bg-gray-700 rounded-lg border border-gray-600 text-sm text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                        </div>
+                    </div>
+                    <!-- 경고 문구 -->
+                    <p class="text-xs text-yellow-400/70 mb-4 text-center">
+                        욕설이 들어간 제목이나 내용이 들어가면 해당 사용자 IP 밴 합니다.
+                    </p>
+
+                    <div class="flex justify-end">
+                        <button
+                            id="btn-share-plan"
+                            class="h-10 px-6 bg-indigo-500 hover:bg-indigo-600 rounded-lg text-white text-sm font-medium shadow-md transition-shadow">
+                            공유하기
+                        </button>
+                    </div>
+                </section>
+
+                <!-- 정렬 버튼 -->
+                <div class="flex justify-end space-x-2 max-w-3xl mx-auto mb-8">
+                    <button id="btn-sort-new" class="h-8 px-3 bg-blue-500 hover:bg-blue-600 text-white rounded text-sm">
+                        최신순
+                    </button>
+                    <button
+                        id="btn-sort-like"
+                        class="h-8 px-3 bg-green-500 hover:bg-green-600 text-white rounded text-sm">
+                        좋아요순
+                    </button>
+                </div>
+
+                <!-- 공유 리스트 -->
+                <div id="shared-plans-list" class="space-y-4 max-w-3xl mx-auto">
+                    <p id="empty-msg" class="text-center text-gray-400 hidden">공유된 플랜이 없습니다.</p>
+                </div>
+            </main>
+        </div>
+
+        <!-- 닉네임 설정 모달 -->
+        <div
+            id="nickname-modal"
+            class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 hidden">
+            <div class="relative bg-gray-800 p-6 rounded-lg w-full max-w-sm space-y-4">
+                <!-- 닫기 버튼 -->
+                <button
+                    id="btn-close-nickname-modal"
+                    onclick="nicknameModal.classList.add('hidden'); appDiv.classList.remove('hidden');"
+                    class="absolute top-2 right-2 p-1 text-gray-400 hover:text-gray-200 transition">
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        class="w-5 h-5"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor">
+                        <path
+                            stroke-linecap="round"
+                            stroke-linejoin="round"
+                            stroke-width="2"
+                            d="M6 18L18 6M6 6l12 12" />
+                    </svg>
+                </button>
+                <h2 class="text-xl font-semibold text-white">닉네임 설정</h2>
+                <input
+                    id="nickname-input"
+                    type="text"
+                    placeholder="사용하실 닉네임을 입력하세요"
+                    class="w-full px-3 py-2 bg-gray-700 rounded-lg text-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500" />
+                <!-- 경고 문구 -->
+                <p class="text-xs text-yellow-400/70 mb-4 text-center">
+                    욕설이 들어간 닉네임으로 설정하면 해당 사용자 IP 밴 합니다.
+                </p>
+                <button
+                    id="btn-save-nickname"
+                    class="w-full py-2 bg-indigo-500 hover:bg-indigo-600 text-white rounded-lg text-sm font-medium">
+                    저장
+                </button>
+            </div>
+        </div>
+
+        <script src="share.js"></script>
+    </body>
+</html>
