@@ -243,6 +243,11 @@ async function loadSharedPlans() {
         };
         wrap.append(likeBtn);
 
+        const importInfo = document.createElement("span");
+        importInfo.textContent = `📥 ${d.importCount || 0}`;
+        importInfo.className = "text-green-400";
+        wrap.append(importInfo);
+
         // 삭제/가져오기
         if (d.ownerUid === auth.currentUser.uid) {
             const del = document.createElement("button");
@@ -268,7 +273,15 @@ async function loadSharedPlans() {
                         description: d.originalDescription,
                         playlistLink: d.originalPlaylistLink
                     });
+                    // 가져오기 횟수 증가
+                    await db
+                        .collection("sharedPlans")
+                        .doc(doc.id)
+                        .update({
+                            importCount: firebase.firestore.FieldValue.increment(1)
+                        });
                     alert("가져오기 완료!");
+                    loadSharedPlans();
                 } catch (e) {
                     alert("가져오기 실패: " + e.message);
                 } finally {
